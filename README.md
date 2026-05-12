@@ -29,7 +29,7 @@ SC6107/
 | Module | Owner | README |
 |---|---|---|
 | A — Flash-Loan Aggregator | Person A | [document/A_README.md](document/A_README.md) |
-| B — DEX Adapters & Routing | Person B | _coming_ |
+| B — DEX Adapters & Routing | Person B | [document/B_README.md](document/B_README.md) |
 | C — Arbitrage Executor + MEV + Gas | Person C | _coming_ |
 | D — Off-chain Backend + Liquidation Bot | Person D | _coming_ |
 | E — Frontend + Docs + CI | Person E | _coming_ |
