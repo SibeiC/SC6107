@@ -1,0 +1,26 @@
+{
+  "name": "sc6107-services",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "price-watcher": "tsx services/price-watcher/index.ts",
+    "profit-sim": "tsx services/profit-sim/index.ts",
+    "liq-bot": "tsx services/liq-bot/index.ts",
+    "ws-server": "tsx services/ws-server/index.ts"
+  },
+  "dependencies": {
+    "viem": "^2.21.0",
+    "ws": "^8.18.0",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
