@@ -68,3 +68,10 @@ cp .env.example .env       # fill in PRIVATE_KEY + SEPOLIA_RPC_URL
 
 The Day-1 interfaces are locked. Anything below them is implementation detail
 and can change without breaking other modules.
+
+## AI tool usage
+
+Per the project's academic-integrity policy (Development Project doc, §AI
+Tool Usage), AI assistance (Claude) was used during Module A development
+for scaffolding, NatSpec drafting, and test case generation. All code has
+been reviewed, modified, and is understood by the contributor.
