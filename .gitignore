@@ -33,3 +33,6 @@ coverage/
 
 # OS
 .DS_Store
+
+# Foundry-managed dependencies — run `forge install` to fetch
+contracts/lib/
