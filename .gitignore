@@ -10,6 +10,26 @@ states/
 *.dbg.json
 *.tsbuildinfo
 
-# Optional
+# Secrets
 .env
 .env.local
+
+# -----------------------------------------------------------------------------
+# Foundry
+# -----------------------------------------------------------------------------
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+
+# -----------------------------------------------------------------------------
+# Node / frontend (placeholders for Person D/E)
+# -----------------------------------------------------------------------------
+node_modules/
+dist/
+build/
+.next/
+coverage/
+*.log
+
+# OS
+.DS_Store
