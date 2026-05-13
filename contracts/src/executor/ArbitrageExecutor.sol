@@ -165,6 +165,17 @@ contract ArbitrageExecutor is FlashLoanReceiverBase {
 
         (Route memory route, uint256 minProfit) = abi.decode(data, (Route, uint256));
 
+        // The adapter already transferred `amount` of `asset` to us before
+        // calling onFlashLoan. Snapshot the *prior* balance so we credit
+        // only the round-trip surplus — any previously-credited profit
+        // still parked in this contract must not be re-counted against
+        // the current beneficiary (which would let a fresh caller drain
+        // someone else's unwithdrawn balance).
+        uint256 balBefore;
+        unchecked {
+            balBefore = IERC20(asset).balanceOf(address(this)) - amount;
+        }
+
         IRouter r = router;
         // Approve, execute, immediately revoke. Defence-in-depth at a ~5k
         // gas cost — accepted because a stale allowance to a swappable
@@ -177,9 +188,11 @@ contract ArbitrageExecutor is FlashLoanReceiverBase {
         uint256 bpsFloor = (amount * uint256(minProfitBps)) / 10_000;
         uint256 floor;
         unchecked {
-            // `owed + minProfit + bpsFloor` cannot realistically overflow
-            // for any asset+amount combination Aave/Balancer will lend.
-            floor = owed + minProfit + bpsFloor;
+            // `balBefore + owed + minProfit + bpsFloor` cannot realistically
+            // overflow for any asset+amount combination Aave/Balancer will
+            // lend (balances are bounded by token supply, which is in turn
+            // bounded by uint256).
+            floor = balBefore + owed + minProfit + bpsFloor;
         }
 
         uint256 bal = IERC20(asset).balanceOf(address(this));
@@ -187,7 +200,7 @@ contract ArbitrageExecutor is FlashLoanReceiverBase {
 
         uint256 profit;
         unchecked {
-            profit = bal - owed;
+            profit = bal - balBefore - owed;
             profitWithdrawable[bene][asset] += profit;
         }
         emit ArbExecuted(bene, asset, amount, fee, profit);
