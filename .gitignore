@@ -36,3 +36,8 @@ coverage/
 
 # Foundry-managed dependencies — run `forge install` to fetch
 contracts/lib/
+
+# Person B files
+person_b_plan.md
+person_b_tasks.md
+
