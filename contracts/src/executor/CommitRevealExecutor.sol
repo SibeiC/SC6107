@@ -40,12 +40,14 @@ contract CommitRevealExecutor is ArbitrageExecutor {
     event Committed(address indexed committer, bytes32 indexed commitHash, uint256 blockNumber);
     event Revealed(address indexed committer, bytes32 indexed commitHash);
     event Cancelled(address indexed committer, bytes32 indexed commitHash);
+    event Cleaned(address indexed cleaner, bytes32 indexed commitHash);
     event RevealParamsUpdated(uint64 minDelay, uint64 maxWindow);
 
     error CommitAlreadyExists();
     error NoSuchCommit();
     error RevealTooEarly(uint256 current, uint256 earliest);
     error RevealExpired();
+    error CommitStillLive(uint256 current, uint256 earliestCleanup);
     error InvalidRevealParams();
 
     // ---------------------------------------------------------------------
@@ -133,6 +135,34 @@ contract CommitRevealExecutor is ArbitrageExecutor {
         if (commits[h] == 0) revert NoSuchCommit();
         delete commits[h];
         emit Cancelled(msg.sender, h);
+    }
+
+    /// @notice Prune an expired commit slot. Anyone may call this once
+    ///         `maxRevealWindow` blocks have passed since the commit —
+    ///         the slot is dead at that point (it can no longer be
+    ///         revealed) so clearing it costs no security and bounds
+    ///         long-term state growth.
+    /// @dev    Mitigates the spam vector where a griefer publishes
+    ///         random hashes whose preimages they alone know (or know
+    ///         nothing about). Such commits can never be cancelled by
+    ///         a third party (cancel binds beneficiary = msg.sender)
+    ///         nor revealed, so without cleanup() they would persist
+    ///         indefinitely. Note this does NOT prevent state growth
+    ///         during the window itself — a determined spammer can
+    ///         still pay for `maxRevealWindow` blocks' worth of
+    ///         storage. We treat that as a bounded cost rather than
+    ///         introduce a stake / commit fee that would also tax
+    ///         legitimate users.
+    function cleanup(bytes32 commitHash) external {
+        uint256 ca = commits[commitHash];
+        if (ca == 0) revert NoSuchCommit();
+        uint256 earliestCleanup;
+        unchecked {
+            earliestCleanup = ca + uint256(maxRevealWindow) + 1;
+        }
+        if (block.number < earliestCleanup) revert CommitStillLive(block.number, earliestCleanup);
+        delete commits[commitHash];
+        emit Cleaned(msg.sender, commitHash);
     }
 
     // ---------------------------------------------------------------------

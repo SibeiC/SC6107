@@ -23,7 +23,7 @@ contracts/src/
 
 contracts/test/
 ├── ArbitrageExecutor.t.sol            24 cases — unit + fuzz
-├── CommitRevealExecutor.t.sol         16 cases — commit / reveal / cancel / params
+├── CommitRevealExecutor.t.sol         19 cases — commit / reveal / cancel / cleanup / params
 ├── Integration.t.sol                  7 cases — Aave × Balancer × profit/break-even/loss
 ├── ArbitrageExecutor.invariant.t.sol  3 invariants × 256 runs each
 └── helpers/MockRouter.sol             controllable IRouter for tests
@@ -143,11 +143,11 @@ Current line counts:
 | File                        | Tests | Status |
 |-----------------------------|------:|--------|
 | `ArbitrageExecutor.t.sol`   |    24 | green  |
-| `CommitRevealExecutor.t.sol`|    16 | green  |
+| `CommitRevealExecutor.t.sol`|    19 | green  |
 | `Integration.t.sol`         |     7 | green  |
 | `ArbitrageExecutor.invariant.t.sol` | 3 invariants × 256 runs | green |
 | Person A's suite (unchanged) | 35   | green  |
-| **Total**                   | **85**|       |
+| **Total**                   | **88**|       |
 
 ## Security
 

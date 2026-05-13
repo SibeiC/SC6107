@@ -248,6 +248,52 @@ contract CommitRevealExecutorTest is Test {
     }
 
     // -----------------------------------------------------------------
+    // Cleanup (any-caller prune after window)
+    // -----------------------------------------------------------------
+
+    function test_cleanup_afterWindow_anyoneCanPrune() public {
+        vm.roll(100);
+        bytes32 salt = bytes32(uint256(8));
+        bytes32 h = _commitFor(alice, salt, 0);
+
+        // Past the reveal window — slot is dead.
+        vm.roll(100 + MAX_WINDOW + 1);
+
+        // Bob (not the committer / beneficiary) cleans it up.
+        vm.expectEmit(true, true, false, false, address(executor));
+        emit CommitRevealExecutor.Cleaned(bob, h);
+        vm.prank(bob);
+        executor.cleanup(h);
+
+        assertEq(executor.commits(h), 0);
+    }
+
+    function test_cleanup_inWindow_revertsCommitStillLive() public {
+        vm.roll(100);
+        bytes32 salt = bytes32(uint256(9));
+        bytes32 h = _commitFor(alice, salt, 0);
+
+        // Still inside the window — must not prune.
+        vm.roll(100 + MAX_WINDOW); // exact last block of the window
+        vm.prank(bob);
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                CommitRevealExecutor.CommitStillLive.selector,
+                100 + MAX_WINDOW,
+                100 + MAX_WINDOW + 1
+            )
+        );
+        executor.cleanup(h);
+    }
+
+    function test_cleanup_unknownHash_revertsNoSuchCommit() public {
+        bytes32 fake = keccak256("not a real commit");
+        vm.prank(bob);
+        vm.expectRevert(CommitRevealExecutor.NoSuchCommit.selector);
+        executor.cleanup(fake);
+    }
+
+    // -----------------------------------------------------------------
     // Inherited ArbitrageExecutor surface still works
     // -----------------------------------------------------------------
 

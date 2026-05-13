@@ -13,7 +13,7 @@ invariant tests) that backs every claim below.
 | Pass                          | Status                                                                                                                                                                       |
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Manual review (design + code) | Complete — findings in §3.                                                                                                                                                   |
-| Unit / integration suite      | 85 tests, all green. See `forge test`.                                                                                                                                       |
+| Unit / integration suite      | 88 tests, all green. See `forge test`.                                                                                                                                       |
 | Invariant suite               | 3 invariants × 256 runs × ~500 calls each, zero reverts. See `test/ArbitrageExecutor.invariant.t.sol`.                                                                       |
 | Fuzz                          | `testFuzz_profitable_iff_returnCoversFee` (256 runs) drives the executor across the profitable / unprofitable boundary.                                                      |
 | Slither static analysis       | **Not run locally** — the developer's environment did not have `slither` installed and the project did not want a one-off CI image added. Run command + expected items below. |
@@ -147,6 +147,31 @@ trigger because `safeTransfer` is to `msg.sender`-supplied `to`, not
 to a free address. Push-payment inside the callback would have
 reintroduced a reentry vector for contract beneficiaries — explicitly
 avoided.
+
+### 3.9 [LOW — MITIGATED] Spam commits cause unbounded state growth
+
+**Surface:** `CommitRevealExecutor.commit(bytes32)` writes a new
+mapping slot for any hash. A griefer can publish arbitrary random
+hashes whose preimages they alone know (or know nothing about). The
+beneficiary-bound preimage in `cancel()` means a third party cannot
+clear those slots, so without intervention they persist forever.
+
+**Mitigation:** `cleanup(bytes32 commitHash)` lets *anyone* prune a
+slot once `block.number > committedAt + maxRevealWindow`. By that
+point the commit is dead (`reveal` can no longer succeed) so removing
+it costs no security. State growth is bounded in steady-state by the
+spam rate × `maxRevealWindow`.
+
+**Residual risk:** during the window itself, spam is unprunable — a
+determined attacker can buy `maxRevealWindow` blocks worth of
+storage growth at the cost of a `SSTORE` per commit. Accepted as a
+bounded cost rather than introduce a per-commit stake / fee that
+would also tax legitimate users. Owner can shrink `maxRevealWindow`
+via `setRevealParams` if abuse becomes load-bearing.
+
+**Tests:** `test_cleanup_afterWindow_anyoneCanPrune`,
+`test_cleanup_inWindow_revertsCommitStillLive`,
+`test_cleanup_unknownHash_revertsNoSuchCommit`.
 
 ## 4. Properties verified by tests
 
