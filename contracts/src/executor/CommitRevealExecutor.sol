@@ -97,22 +97,30 @@ contract CommitRevealExecutor is ArbitrageExecutor {
         if (block.number < earliest) revert RevealTooEarly(block.number, earliest);
         if (block.number > ca + uint256(maxRevealWindow)) revert RevealExpired();
 
-        // Clear before running the arb. A non-profitable reveal still
-        // burns the commit slot — the off-chain bot reads NotProfitable
-        // and decides whether to re-commit.
+        // Clear the commit before running the arb so a successful reveal is
+        // single-use. NOTE: this delete is in the SAME transaction as
+        // _doArb. If _doArb reverts (e.g. NotProfitable) the whole tx —
+        // including this delete — is rolled back and the commit slot
+        // survives. The committer must then either cancel() it or wait
+        // for maxRevealWindow to expire before cleanup() can prune it.
+        // See test_reveal_unprofitable_revertsAndCommitSurvives.
         delete commits[h];
         emit Revealed(msg.sender, h);
 
         _doArb(msg.sender, provider, asset, amount, route, minProfit);
     }
 
-    /// @notice Withdraw a commit you placed (or anyone else's, if you
-    ///         happen to hold the preimage). Useful when a price moves
+    /// @notice Withdraw a commit you placed. Useful when a price moves
     ///         and your committed trade is no longer worth revealing.
-    /// @dev    Knowledge of the preimage is the only authority required —
-    ///         there's no on-chain link from hash to committer, so we
-    ///         can't check msg.sender against it. That's fine; cancel
-    ///         only deletes the slot, no value flows.
+    /// @dev    Authorisation: the commit hash binds the beneficiary
+    ///         (msg.sender of `reveal`) into its preimage. cancel()
+    ///         recomputes the hash with msg.sender as the beneficiary,
+    ///         so only the address that would be entitled to reveal
+    ///         can cancel. A third party that knows the preimage but
+    ///         is not the bound beneficiary cannot cancel — their
+    ///         msg.sender would produce a different hash. This is
+    ///         deliberate: a permissive cancel would let anyone grief a
+    ///         committer by deleting their slot.
     function cancel(
         address provider,
         address asset,
