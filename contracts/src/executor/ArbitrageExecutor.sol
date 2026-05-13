@@ -185,14 +185,18 @@ contract ArbitrageExecutor is FlashLoanReceiverBase {
         IERC20(asset).forceApprove(address(r), 0);
 
         uint256 owed = amount + fee;
-        uint256 bpsFloor = (amount * uint256(minProfitBps)) / 10_000;
+        uint64 mpb = minProfitBps; // single SLOAD
         uint256 floor;
         unchecked {
-            // `balBefore + owed + minProfit + bpsFloor` cannot realistically
+            // `balBefore + owed + minProfit (+ bpsFloor)` cannot realistically
             // overflow for any asset+amount combination Aave/Balancer will
             // lend (balances are bounded by token supply, which is in turn
-            // bounded by uint256).
-            floor = balBefore + owed + minProfit + bpsFloor;
+            // bounded by uint256). Short-circuit the bps math when the
+            // global floor is disabled (the common case post-deploy).
+            floor = balBefore + owed + minProfit;
+            if (mpb != 0) {
+                floor += (amount * uint256(mpb)) / 10_000;
+            }
         }
 
         uint256 bal = IERC20(asset).balanceOf(address(this));
