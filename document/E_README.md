@@ -18,6 +18,11 @@ Implemented in this module:
 - Commit-reveal and direct-execution UI states for Person C's executor.
 - Recent transaction and liquidation watch panels for the demo surface.
 
+Wallet and contract-write dependencies are intentionally not installed in
+this first frontend slice. `wagmi`, `viem`, and related providers should be
+added together with the real wallet integration so this mock dashboard stays
+small and easy to audit.
+
 ## Integration assumptions
 
 ### Contract addresses
@@ -74,6 +79,18 @@ npm run dev
 
 Then open the local Next.js URL printed by the dev server.
 
+Verified locally:
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+npm audit --audit-level=moderate
+```
+
+The frontend currently uses Next.js 16 with ESLint 9. A package lock is
+committed so teammates and markers install the same dependency graph.
+
 ## Files
 
 ```text
@@ -81,6 +98,7 @@ frontend/
 ├── app/
 │   ├── globals.css
 │   ├── layout.tsx
+│   ├── not-found.tsx
 │   └── page.tsx
 ├── components/
 │   ├── Dashboard.tsx
@@ -96,7 +114,9 @@ frontend/
 │   ├── addresses.ts
 │   ├── mockData.ts
 │   └── types.ts
+├── eslint.config.mjs
 ├── next.config.mjs
+├── package-lock.json
 ├── package.json
 └── tsconfig.json
 ```
@@ -134,7 +154,7 @@ a real user-visible or maintainability improvement.
 ## Next steps
 
 - Replace mock opportunity data with Person D's WebSocket stream.
-- Add wallet connection with wagmi once live execution is ready.
+- Add wallet connection with wagmi / viem once live execution is ready.
 - Generate commit hashes from the selected route and user wallet address.
 - Add frontend CI for typecheck/build after dependencies are installed.
 - Capture final demo screenshots and add them to the presentation deck.
