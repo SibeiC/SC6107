@@ -4,8 +4,8 @@ A 5-person team build of an atomic flash-loan arbitrage platform on Sepolia
 (Aave V3 + Balancer V2 → Uniswap V3 + two self-deployed V2 pools), with
 MEV protection, a monitoring dashboard, and a liquidation bot.
 
-See `../Project1_TaskDivision.md` for the team split and the locked Day-1
-interfaces.
+See the per-module READMEs below for ownership, interfaces, and integration
+notes.
 
 ## Repo layout
 
@@ -18,6 +18,7 @@ SC6107/
 │   └── foundry.toml
 ├── docs/                    Per-module design docs
 ├── document/                Per-person READMEs
+├── frontend/                Next.js dashboard (Module E)
 ├── scripts/                 Bash wrappers around forge-script
 ├── addresses.sepolia.json   Shared deployed-addresses file
 ├── .env.example
@@ -32,7 +33,7 @@ SC6107/
 | B — DEX Adapters & Routing | Person B | [document/B_README.md](document/B_README.md) |
 | C — Arbitrage Executor + MEV + Gas | Person C | [document/C_README.md](document/C_README.md) |
 | D — Off-chain Backend + Liquidation Bot | Person D | _coming_ |
-| E — Frontend + Docs + CI | Person E | _coming_ |
+| E — Frontend + Docs + CI | Person E | [document/E_README.md](document/E_README.md) |
 
 ## Quick start
 
@@ -45,6 +46,14 @@ SC6107/
 cd contracts
 forge build
 forge test -vv
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev
 ```
 
 ## AI tool usage
