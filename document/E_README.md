@@ -93,6 +93,38 @@ committed so teammates and markers install the same dependency graph.
 GitHub Actions also runs these frontend checks on pull requests and pushes
 that touch the dashboard, shared deployment addresses, or this module doc.
 
+## Demo script
+
+Use this short flow when presenting Module E to the marker or teammates:
+
+1. Open the dashboard:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+2. Confirm the deployment-status panel reads `addresses.sepolia.json` and
+   shows deployed A/C contracts separately from pending router, DEX, and
+   token addresses.
+3. Show the mock arbitrage opportunity table and price-spread chart as the
+   frontend surface that will later consume Person D's live stream.
+4. Select commit-reveal and direct execution modes in the execution panel.
+   The buttons intentionally stay blocked while router and route data are
+   unavailable.
+5. Point to the recent-transaction and liquidation-watch panels as the
+   places where backend events will appear during the final integrated demo.
+
+## Marker checklist
+
+- Module E is isolated under `frontend/` and `document/E_README.md`.
+- The frontend can run before B's router and D's backend are merged.
+- Pending zero addresses are handled explicitly instead of hidden.
+- Mock data is isolated in `frontend/lib/mockData.ts`.
+- Dashboard panels are split into small files for future integration work.
+- CI runs install, lint, typecheck, and build for frontend changes.
+- Current limitations are intentional: no wallet writes and no WebSocket
+  connection until the corresponding contract/backend interfaces are stable.
+
 ## Files
 
 ```text
