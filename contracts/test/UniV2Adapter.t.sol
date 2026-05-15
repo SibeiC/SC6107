@@ -28,7 +28,7 @@ contract UniV2AdapterTest is Test {
         tokenA.mint(user, 10_000 * 10**18);
     }
 
-    function test_GetAmountOut() public view {
+    function test_GetAmountOut() public {
         uint256 amountIn = 100 * 10**18;
         uint256 expectedOut = adapter.getAmountOut(address(tokenA), address(tokenB), amountIn);
         
