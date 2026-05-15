@@ -90,6 +90,8 @@ npm audit --audit-level=moderate
 
 The frontend currently uses Next.js 16 with ESLint 9. A package lock is
 committed so teammates and markers install the same dependency graph.
+GitHub Actions also runs these frontend checks on pull requests and pushes
+that touch the dashboard, shared deployment addresses, or this module doc.
 
 ## Files
 
@@ -156,7 +158,7 @@ a real user-visible or maintainability improvement.
 - Replace mock opportunity data with Person D's WebSocket stream.
 - Add wallet connection with wagmi / viem once live execution is ready.
 - Generate commit hashes from the selected route and user wallet address.
-- Add frontend CI for typecheck/build after dependencies are installed.
+- Keep frontend CI green as integration code replaces mock data.
 - Capture final demo screenshots and add them to the presentation deck.
 
 ## AI tool usage
