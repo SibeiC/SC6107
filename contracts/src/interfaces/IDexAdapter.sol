@@ -14,7 +14,7 @@ interface IDexAdapter {
      * @param amountIn The amount of tokenIn to sell.
      * @return The amount of tokenOut expected.
      */
-    function getAmountOut(address tokenIn, address tokenOut, uint256 amountIn) external view returns (uint256);
+    function getAmountOut(address tokenIn, address tokenOut, uint256 amountIn) external returns (uint256);
 
     /**
      * @notice Executes a swap on the underlying DEX.

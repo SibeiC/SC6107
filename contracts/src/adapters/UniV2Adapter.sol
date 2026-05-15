@@ -20,7 +20,7 @@ contract UniV2Adapter is IDexAdapter {
     /**
      * @notice Fetch the expected output amount for a predefined swap amount.
      */
-    function getAmountOut(address tokenIn, address tokenOut, uint256 amountIn) external view override returns (uint256) {
+    function getAmountOut(address tokenIn, address tokenOut, uint256 amountIn) external override returns (uint256) {
         address[] memory path = new address[](2);
         path[0] = tokenIn;
         path[1] = tokenOut;

@@ -28,7 +28,7 @@ contract UniV2AdapterTest is Test {
         tokenA.mint(user, 10_000 * 10**18);
     }
 
-    function test_GetAmountOut() public view {
+    function test_GetAmountOut() public {
         uint256 amountIn = 100 * 10**18;
         uint256 expectedOut = adapter.getAmountOut(address(tokenA), address(tokenB), amountIn);
         
@@ -52,5 +52,18 @@ contract UniV2AdapterTest is Test {
 
         assertEq(actualOut, 200 * 10**18, "Swap output mismatched");
         assertEq(tokenB.balanceOf(user), 200 * 10**18, "User did not receive tokens");
+    }
+
+    function test_SwapRevertsOnSlippage() public {
+        uint256 amountIn = 100 * 10**18;
+        // The mock returns exactly 200. Setting minOut to 201 should trigger a revert.
+        uint256 minOut = 201 * 10**18;
+
+        vm.startPrank(user);
+        tokenA.transfer(address(adapter), amountIn);
+
+        vm.expectRevert("INSUFFICIENT_OUTPUT_AMOUNT");
+        adapter.swap(address(tokenA), address(tokenB), amountIn, minOut, user);
+        vm.stopPrank();
     }
 }
