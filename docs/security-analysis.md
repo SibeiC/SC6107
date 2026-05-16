@@ -192,7 +192,7 @@ via `setRevealParams` if abuse becomes load-bearing.
 
 ## 5. Open items
 
-- Slither pass against a populated `lib/`. Pre-emptive items above
+- Slither pass against a populated `lib/`. Preemptive items above
   cover the patterns we'd expect — no surprises anticipated.
 - Once Person B's real `Router` lands, re-run integration tests
   against it (the MockRouter is intentionally permissive about

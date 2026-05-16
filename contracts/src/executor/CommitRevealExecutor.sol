@@ -13,10 +13,12 @@ import { IRouter, Route } from "../interfaces/IRouter.sol";
 ///         that learns the preimage cannot replay it.
 /// @dev    Why this works on Sepolia: Flashbots' private mempool isn't
 ///         available there, but the task brief explicitly accepts
-///         commit-reveal as a substitute. With `minRevealDelay = 1`
-///         (default) this contract is equivalent to a 1-block timelock —
-///         the simplest fallback path. Owner can tighten or loosen the
-///         window via {setRevealParams}.
+///         commit-reveal as a substitute. `minRevealDelay` and
+///         `maxRevealWindow` are constructor arguments (no built-in
+///         contract default; the deploy script picks 1 / 256). With
+///         `minRevealDelay = 1` the contract is equivalent to a
+///         1-block timelock — the simplest fallback path. Owner can
+///         tighten or loosen the window later via {setRevealParams}.
 contract CommitRevealExecutor is ArbitrageExecutor {
     // ---------------------------------------------------------------------
     // Storage
