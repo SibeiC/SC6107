@@ -57,7 +57,7 @@ versus a straightforward implementation.
 |----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
 | `forceApprove(router, 0)` after the swap (~5 000 gas)                | Guarantees no lingering allowance to a swappable router — the trade-off is documented and tiny.   |
 | Pull-payment ledger (`profitWithdrawable`) instead of push-on-callback| Avoids reentry surface for contract beneficiaries; payer eats the second tx's gas, not the executor. |
-| Outer `nonReentrant` on `withdraw`                                   | Defence-in-depth in case the user's beneficiary contract re-enters mid-router-swap.                |
+| Outer `nonReentrant` on `withdraw`                                   | Defense-in-depth in case the user's beneficiary contract re-enters mid-router-swap.                |
 
 ## How to reproduce
 
