@@ -32,7 +32,7 @@ interface IRouter {
      * @return route The optimal route struct packed with necessary data.
      * @return expectedOut The expected amount of tokenOut from the best route.
      */
-    function bestRoute(address tokenIn, address tokenOut, uint256 amountIn) external view returns (Route memory route, uint256 expectedOut);
+    function bestRoute(address tokenIn, address tokenOut, uint256 amountIn) external returns (Route memory route, uint256 expectedOut);
 
     /**
      * @notice Executes a pre-calculated route.

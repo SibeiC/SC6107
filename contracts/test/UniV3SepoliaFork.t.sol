@@ -14,7 +14,7 @@ contract UniV3SepoliaForkTest is Test {
     address public SEP_UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;
 
     address public routerAddr = 0x3bFA4769FB09eefC5a80d6E87c3B9C650f7Ae48E;
-    address public quoterAddr = 0xEd1f6473345F45b75F8179591dd5bA1888cf2382;
+    address public quoterAddr = 0xED1f6473345f45b75f8179591Dd5BA1888cf2382;
 
     function setUp() public {
         adapter = new UniV3Adapter(routerAddr, quoterAddr);
