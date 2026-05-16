@@ -65,8 +65,8 @@ sequenceDiagram
     Router-->>Exec: amountOut
     Exec->>Exec: forceApprove(router, 0)
     Note right of Exec: profit = balanceOf - balBefore - owed<br/>profitWithdrawable[bene][asset] += profit
-    Exec-->>Adp: callback returns; approve (amount + fee)
-    Adp->>Pool: pool pulls (amount + fee)
+    Exec-->>Adp: callback returns, approve owed
+    Adp->>Pool: pool pulls owed
     Note right of Exec: tstore(beneficiary, 0)
 
     Note over Bot,DEX: Phase 2 — pull profit (separate tx)
